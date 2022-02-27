@@ -139,6 +139,23 @@ profiles:
     # battery charge level (1 line repeat) - 652 bytes
     - { w: 163, h: 1 }
 
+  - name: mt8167
+    color_model: bgrabe
+    # a profile may fit many phones, so you can give it an "alias".
+    alias:
+    - cpad3
+    formats:
+    # full screen image - 3686400 bytes
+    - { w: 1280, h: 800 }
+    # symbols - 11520 bytes
+    - { w: 45, h: 64 }
+    # bigger symbols - 14592 bytes
+    - { w: 57, h: 64 }
+    # battery charge animation - 18908 bytes
+    - { w: 163, h: 29 }
+    # battery charge level (1 line repeat) - 652 bytes
+    - { w: 163, h: 1 }
+
   # Another example for my previous phone.
   - name: thl5000
     color_model: rgb565le
