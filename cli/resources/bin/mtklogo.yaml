@@ -143,7 +143,7 @@ profiles:
     color_model: bgrabe
     # a profile may fit many phones, so you can give it an "alias".
     alias:
-    - cpad3
+    - a04br3
     formats:
     # full screen image - 3686400 bytes
     - { w: 1280, h: 800 }
