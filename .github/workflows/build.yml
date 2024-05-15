@@ -1,0 +1,51 @@
+name: Build
+
+on:
+  push:
+    paths-ignore:
+      - "LICENSE"
+      - "README.md"
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build
+        working-directory: cli
+        run: cargo install --path .
+
+      - name: Copy artifacts on Ubuntu
+        if: matrix.os == 'ubuntu-latest'
+        working-directory: cli
+        run: |
+          for file in resources/bin/mtklogo.yaml target/release/mtklogo; do
+            cp "$file" .
+          done
+          echo "version=v$(grep -m 1 -Po 'version\s*=\s*"\K[^"]+' Cargo.toml)" >> $GITHUB_ENV
+
+      - name: Copy artifacts on Windows
+        if: matrix.os == 'windows-latest'
+        working-directory: cli
+        run: |
+          foreach ($file in @(".\resources\bin\mtklogo.yaml", ".\target\release\mtklogo.exe")) {
+            Copy-Item -Path $file -Destination .
+          }
+          Select-String -Path Cargo.toml -Pattern 'version\s*=\s*"([^"]+)' | Select-Object -First 1 -Expand Matches | ForEach-Object { "version=v$($_.Groups[1].Value)" | Add-Content -Path $env:GITHUB_ENV }
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: mtklogo-${{ env.version }}@${{ runner.os }}
+          path: ./cli/mtklogo*
